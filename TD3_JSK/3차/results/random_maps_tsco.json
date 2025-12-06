@@ -1,0 +1,253 @@
+{
+  "model_path": "models/td3_tsco_random_map_500k.zip",
+  "blocks": [
+    "T",
+    "S",
+    "C",
+    "O"
+  ],
+  "num_blocks": 4,
+  "num_maps": 2,
+  "test_seeds": [
+    2679,
+    3286,
+    4657,
+    5012,
+    9935
+  ],
+  "n_episodes": 3,
+  "random_maps": [
+    "COTS",
+    "CTOS"
+  ],
+  "map_results": {
+    "COTS": {
+      "seed_results": {
+        "2679": {
+          "mean_reward": 0.054449951664058464,
+          "std_reward": 3.3395324219883755e-07,
+          "min_reward": 0.054449710845388785,
+          "max_reward": 0.05445042391416441,
+          "mean_length": 2000.0,
+          "success_rate": 0.0,
+          "crash_rate": 0.0,
+          "out_of_road_rate": 0.0,
+          "episode_rewards": [
+            0.054449710845388785,
+            0.05444972023262219,
+            0.05445042391416441
+          ],
+          "episode_lengths": [
+            2000,
+            2000,
+            2000
+          ]
+        },
+        "3286": {
+          "mean_reward": 0.055551142305328975,
+          "std_reward": 2.2946581464362336e-09,
+          "min_reward": 0.05555114046899367,
+          "max_reward": 0.05555114554062599,
+          "mean_length": 2000.0,
+          "success_rate": 0.0,
+          "crash_rate": 0.0,
+          "out_of_road_rate": 0.0,
+          "episode_rewards": [
+            0.05555114090636726,
+            0.05555114554062599,
+            0.05555114046899367
+          ],
+          "episode_lengths": [
+            2000,
+            2000,
+            2000
+          ]
+        },
+        "4657": {
+          "mean_reward": 0.054449951664058464,
+          "std_reward": 3.3395324219883755e-07,
+          "min_reward": 0.054449710845388785,
+          "max_reward": 0.05445042391416441,
+          "mean_length": 2000.0,
+          "success_rate": 0.0,
+          "crash_rate": 0.0,
+          "out_of_road_rate": 0.0,
+          "episode_rewards": [
+            0.054449710845388785,
+            0.05444972023262219,
+            0.05445042391416441
+          ],
+          "episode_lengths": [
+            2000,
+            2000,
+            2000
+          ]
+        },
+        "5012": {
+          "mean_reward": 0.05445136165536472,
+          "std_reward": 8.910995284163006e-07,
+          "min_reward": 0.05445041152727105,
+          "max_reward": 0.05445255367827267,
+          "mean_length": 2000.0,
+          "success_rate": 0.0,
+          "crash_rate": 0.0,
+          "out_of_road_rate": 0.0,
+          "episode_rewards": [
+            0.054451119760550434,
+            0.05445255367827267,
+            0.05445041152727105
+          ],
+          "episode_lengths": [
+            2000,
+            2000,
+            2000
+          ]
+        },
+        "9935": {
+          "mean_reward": 0.07460030272702,
+          "std_reward": 3.3954357393535903e-07,
+          "min_reward": 0.07460006092086974,
+          "max_reward": 0.07460078291006558,
+          "mean_length": 2000.0,
+          "success_rate": 0.0,
+          "crash_rate": 0.0,
+          "out_of_road_rate": 0.0,
+          "episode_rewards": [
+            0.07460006435012466,
+            0.07460078291006558,
+            0.07460006092086974
+          ],
+          "episode_lengths": [
+            2000,
+            2000,
+            2000
+          ]
+        }
+      },
+      "summary": {
+        "overall_mean_reward": 0.058700542003166115,
+        "overall_std_reward": 0.007961302415496077,
+        "overall_success_rate": 0.0,
+        "success_rate_std": 0.0
+      }
+    },
+    "CTOS": {
+      "seed_results": {
+        "2679": {
+          "mean_reward": 0.054449951664058464,
+          "std_reward": 3.3395324219883755e-07,
+          "min_reward": 0.054449710845388785,
+          "max_reward": 0.05445042391416441,
+          "mean_length": 2000.0,
+          "success_rate": 0.0,
+          "crash_rate": 0.0,
+          "out_of_road_rate": 0.0,
+          "episode_rewards": [
+            0.054449710845388785,
+            0.05444972023262219,
+            0.05445042391416441
+          ],
+          "episode_lengths": [
+            2000,
+            2000,
+            2000
+          ]
+        },
+        "3286": {
+          "mean_reward": 0.055551142305328975,
+          "std_reward": 2.2946581464362336e-09,
+          "min_reward": 0.05555114046899367,
+          "max_reward": 0.05555114554062599,
+          "mean_length": 2000.0,
+          "success_rate": 0.0,
+          "crash_rate": 0.0,
+          "out_of_road_rate": 0.0,
+          "episode_rewards": [
+            0.05555114090636726,
+            0.05555114554062599,
+            0.05555114046899367
+          ],
+          "episode_lengths": [
+            2000,
+            2000,
+            2000
+          ]
+        },
+        "4657": {
+          "mean_reward": 0.054449951664058464,
+          "std_reward": 3.3395324219883755e-07,
+          "min_reward": 0.054449710845388785,
+          "max_reward": 0.05445042391416441,
+          "mean_length": 2000.0,
+          "success_rate": 0.0,
+          "crash_rate": 0.0,
+          "out_of_road_rate": 0.0,
+          "episode_rewards": [
+            0.054449710845388785,
+            0.05444972023262219,
+            0.05445042391416441
+          ],
+          "episode_lengths": [
+            2000,
+            2000,
+            2000
+          ]
+        },
+        "5012": {
+          "mean_reward": 0.05445136165536472,
+          "std_reward": 8.910995284163006e-07,
+          "min_reward": 0.05445041152727105,
+          "max_reward": 0.05445255367827267,
+          "mean_length": 2000.0,
+          "success_rate": 0.0,
+          "crash_rate": 0.0,
+          "out_of_road_rate": 0.0,
+          "episode_rewards": [
+            0.054451119760550434,
+            0.05445255367827267,
+            0.05445041152727105
+          ],
+          "episode_lengths": [
+            2000,
+            2000,
+            2000
+          ]
+        },
+        "9935": {
+          "mean_reward": 0.07460030272702,
+          "std_reward": 3.3954357393535903e-07,
+          "min_reward": 0.07460006092086974,
+          "max_reward": 0.07460078291006558,
+          "mean_length": 2000.0,
+          "success_rate": 0.0,
+          "crash_rate": 0.0,
+          "out_of_road_rate": 0.0,
+          "episode_rewards": [
+            0.07460006435012466,
+            0.07460078291006558,
+            0.07460006092086974
+          ],
+          "episode_lengths": [
+            2000,
+            2000,
+            2000
+          ]
+        }
+      },
+      "summary": {
+        "overall_mean_reward": 0.058700542003166115,
+        "overall_std_reward": 0.007961302415496077,
+        "overall_success_rate": 0.0,
+        "success_rate_std": 0.0
+      }
+    }
+  },
+  "summary": {
+    "overall_mean_success_rate": 0.0,
+    "overall_std_success_rate": 0.0,
+    "overall_mean_reward": 0.058700542003166115,
+    "overall_std_reward": 0.0,
+    "best_map": "COTS",
+    "worst_map": "COTS"
+  }
+}

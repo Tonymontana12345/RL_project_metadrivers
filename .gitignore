@@ -1,0 +1,22 @@
+# Python virtual environment
+venv/
+.venv/
+*venv*/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# ML binaries / native libs
+*.dylib
+*.so
+*.dll
+*.pt
+*.pth
+*.ckpt
+site-packages/
+
+# Mac
+.DS_Store
+

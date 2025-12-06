@@ -1,0 +1,175 @@
+"""
+새로운 PPO 5단계 커리큘럼 러닝 학습 스크립트 (v2)
+
+실행 방법:
+    python train_ppo_curriculum.py
+"""
+
+import os
+from sb3_contrib import RecurrentPPO as PPO
+from stable_baselines3.common.vec_env import DummyVecEnv
+from stable_baselines3.common.callbacks import CheckpointCallback
+
+# 새로 만든 5단계 커리큘럼 설정 import
+from config_ppo_curriculum_v2 import (
+    BASE_ENV_CONFIG,
+    PPO_CONFIG,
+    CURRICULUM_STAGES,
+    TRAINING_CONFIG,
+    MODELS_DIR,
+    LOGS_DIR,
+    print_ppo_curriculum_info,
+)
+
+# 환경 생성 함수 및 시드 고정 함수 import
+from envs.metadrive_env import make_env
+from config import set_global_seed
+
+
+def create_stage_env(stage_key: str, stage_config: dict, seed: int = 0):
+    """
+    커리큘럼 단계에 맞는 환경을 생성합니다.
+    """
+    env_config = BASE_ENV_CONFIG.copy()
+    
+    # 1단계일 경우, 초단순 보상 적용 (학습 가능성 최우선)
+    if stage_key == "stage_1":
+        print("   >> Applying ultra-simple reward config for Stage 1 <<")
+        env_config["use_lateral_reward"] = True   # 차선 중앙 유지 보상
+        env_config["out_of_road_penalty"] = 2.0   # 페널티 최소화
+        env_config["crash_vehicle_penalty"] = 3.0 # 페널티 최소화
+        env_config["crash_object_penalty"] = 2.0  # 페널티 최소화
+        env_config["crash_sidewalk_penalty"] = 2.0# 페널티 최소화
+        env_config["driving_reward"] = 4.0        # 전진 보상 대폭 증가
+        env_config["speed_reward"] = 1.0          # 속도 보상 증가
+    
+    # 단계별 core 설정 덮어쓰기
+    env_config.update({
+        "map": stage_config["map"],
+        "traffic_density": stage_config["traffic_density"],
+        "random_traffic": stage_config["random_traffic"],
+        "start_seed": seed,
+    })
+
+    # 단계별 세부 설정 (있으면 덮어쓰기)
+    if "num_scenarios" in stage_config:
+        env_config["num_scenarios"] = stage_config["num_scenarios"]
+    if "decision_repeat" in stage_config:
+        env_config["decision_repeat"] = stage_config["decision_repeat"]
+    if "horizon" in stage_config:
+        env_config["horizon"] = stage_config["horizon"]
+    
+    # 디버그 출력용
+    print("   ├─ map           :", env_config["map"])
+    print("   ├─ num_scenarios :", env_config["num_scenarios"])
+    print("   ├─ decision_rep. :", env_config["decision_repeat"])
+    print("   ├─ horizon       :", env_config["horizon"])
+    print("   ├─ random_traffic:", env_config["random_traffic"])
+    print("   └─ traffic_dens. :", env_config["traffic_density"])
+    
+    # 벡터화된 환경 생성
+    vec_env = DummyVecEnv([make_env(seed=seed, render=False, config=env_config)])
+    return vec_env
+
+
+def train_ppo_curriculum():
+    """
+    새로운 5단계 PPO 커리큘럼 러닝을 수행합니다.
+    """
+    # 커리큘럼 정보 출력
+    print_ppo_curriculum_info()
+    
+    # 시드 고정 (재현성을 위해)
+    set_global_seed(42)
+    
+    model_name = TRAINING_CONFIG["model_name"]
+    log_dir = os.path.join(LOGS_DIR, model_name)
+    os.makedirs(log_dir, exist_ok=True)
+    
+    print("\n" + "=" * 70)
+    print("🚀 PPO 5-Stage Curriculum Learning Started! (v2)")
+    print(f"Model prefix            : {model_name}")
+    print(f"TensorBoard Log Directory: {log_dir}")
+    print("=" * 70 + "\n")
+    
+    model = None
+    
+    # 5단계 커리큘럼 학습 루프
+    for i, (stage_key, stage_config) in enumerate(CURRICULUM_STAGES.items()):
+        stage_num = i + 1
+        
+        print("\n" + "=" * 70)
+        print(f"📚 Stage {stage_num}/{len(CURRICULUM_STAGES)}: {stage_config['name']} ({stage_key})")
+        print("=" * 70)
+        
+        # 1. 환경 생성
+        print("🌍 Creating environment...")
+        # 각 스테이지마다 서로 다른 seed 풀 사용 (충분히 떨어진 값으로)
+        stage_seed = 10_000 * (i + 1)
+        env = create_stage_env(stage_key, stage_config, seed=stage_seed)
+        print(f"✅ Environment created with base seed: {stage_seed}")
+        
+        # 2. 모델 생성 또는 기존 모델에 새 환경 설정
+        if model is None:
+            print("\n🆕 Creating a new PPO model...")
+            ppo_params = PPO_CONFIG.copy()
+            ppo_params["tensorboard_log"] = log_dir
+            
+            # RecurrentPPO를 사용하므로 MlpLstmPolicy를 지정
+            model = PPO("MlpLstmPolicy", env, **ppo_params)
+            print("✅ New PPO model created.")
+        else:
+            print(f"\n🔄 Reusing model from previous stage and updating environment...")
+            model.set_env(env)
+            print("✅ Environment updated for the new stage.")
+            
+        # 3. 콜백 설정 (체크포인트 저장용)
+        checkpoint_callback = CheckpointCallback(
+            save_freq=TRAINING_CONFIG["save_freq"],
+            save_path=MODELS_DIR,
+            name_prefix=f"{model_name}_{stage_key}",
+            save_replay_buffer=False,
+            save_vecnormalize=True,
+        )
+        
+        # 4. 학습 시작
+        print(f"\n🎓 Starting training for {stage_key} ...")
+        print(f"   - Timesteps this stage : {stage_config['steps']:,}")
+        print(f"   - Total timesteps so far (before stage): {model.num_timesteps:,}\n")
+        try:
+            model.learn(
+                total_timesteps=stage_config["steps"],
+                callback=checkpoint_callback,
+                progress_bar=True,
+                reset_num_timesteps=False,  # 이전 단계의 스텝 수를 이어서 카운트
+            )
+        except KeyboardInterrupt:
+            print("\n\n⚠️ Training interrupted by user. Saving current model and exiting...")
+            break  # 루프 중단 후 최종 모델 저장
+        
+        # 5. 단계별 모델 저장
+        stage_model_path = os.path.join(MODELS_DIR, f"{model_name}_{stage_key}.zip")
+        model.save(stage_model_path)
+        
+        print("\n" + "-" * 70)
+        print(f"💾 Stage {stage_num} finished! Model saved to: {stage_model_path}")
+        print(f"    Total timesteps so far (after stage): {model.num_timesteps:,}")
+        print("-" * 70)
+        
+        env.close()
+
+    # 6. 최종 모델 저장
+    final_model_path = os.path.join(MODELS_DIR, f"{model_name}_final.zip")
+    model.save(final_model_path)
+    
+    print("\n" + "=" * 70)
+    print("🎉🎉 PPO 5-Stage Curriculum Learning Finished! 🎉🎉")
+    print(f"Final model saved to     : {final_model_path}")
+    print(f"Total timesteps trained  : {model.num_timesteps:,}")
+    print("\nTo evaluate the final model, run:")
+    print(f"  python evaluate.py --model {final_model_path}")
+    print("=" * 70 + "\n")
+
+
+if __name__ == "__main__":
+    train_ppo_curriculum()
