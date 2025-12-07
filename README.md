@@ -10,6 +10,8 @@
 | :--- | :--- | :--- | :--- |
 | **[PPA_CCC](PPA_CCC)** | **PPO / Recurrent PPO** | **Curriculum Learning** | 단계별 난이도 상승을 통한 복잡한 도심(교차로/로터리) 주행 및 안정성 확보 |
 | **[TD3_JSK](TD3_JSK)** | **TD3** | **Generalization** | 다중 시드 및 도메인 무작위화를 통한 미지의 맵 적응력(Robustness) 향상 |
+| **[SAC_LJH](SAC_LJH)** | **SAC** | **Curriculum & TRACO** | 안정적인 주행을 위한 커리큘럼 학습 및 주행 궤적 시각화 도구(TRACO) 개발 |
+| **[Ensemble_LJH](Ensemble_LJH/highway_project_Ensemble)** | **Ensemble** | **Model Combination** | TD3와 SAC 모델을 결합하여 단일 모델 대비 성능 극대화 (Scenario/Q-value Based) |
 
 ---
 
@@ -45,7 +47,38 @@ TD3_JSK 프로젝트는 결정론적 정책 기울기(TD3) 알고리즘을 사�
 
 ---
 
-## 🛠️ 공통 환경 설정 및 설치 (Installation)
+## 🚀 3. SAC_LJH (SAC 기반 자율주행 및 시각화)
+
+**"단계적 학습과 정밀한 분석으로 주행 성능을 증명한다."**
+
+SAC_LJH 프로젝트는 SAC 알고리즘을 기반으로 커리큘럼 학습을 적용하고, **TRACO(Trajectory Analysis)** 도구를 통해 주행 궤적을 심층적으로 분석했습니다.
+
+| 단계 | 구분 | 설명 | 핵심 기술 |
+| :-- | :-- | :-- | :-- |
+| **1차** | **기초 (Basic)** | 기본 SAC 알고리즘 구현 및 최적화 | SAC Implementation |
+| **2차** | **커리큘럼 (Curriculum)** | 6단계 난이도 상승 시스템(로터리→교차로→램프) 적용 | 6-Stage Curriculum |
+| **3차** | **일반화 (Generalization)** | 랜덤 맵 평가 및 **TRACO** 시각화 도구 개발 | TRACO, Random Map Eval |
+
+👉 **상세 내용 확인**: [SAC_LJH/README.md](SAC_LJH/README.md)
+
+---
+
+## � 4. Ensemble_LJH (앙상블 모델)
+
+**"최고의 모델들을 결합하여 한계를 돌파한다."**
+
+Ensemble_LJH 프로젝트는 기 학습된 TD3와 SAC 모델의 장점을 결합하여, 단일 모델보다 뛰어난 주행 성능과 안정성을 확보했습니다.
+
+| 전략 | 설명 | 특징 |
+| :-- | :-- | :-- |
+| **Scenario Based** | 맵 종류(CSTO, OSCT 등)에 따라 최적 모델 가중치 부여 | **최고 성능**, 사전 지식 활용 |
+| **Q-Value Weighted** | 실시간 Q-Value(확신도)에 비례하여 가중치 동적 조절 | **유연성**, 미지의 환경 대응 |
+
+👉 **상세 내용 확인**: [Ensemble_LJH/highway_project_Ensemble/ENSEMBLE_README.md](Ensemble_LJH/highway_project_Ensemble/ENSEMBLE_README.md)
+
+---
+
+## �🛠️ 공통 환경 설정 및 설치 (Installation)
 
 모든 프로젝트는 공통된 Python 가상환경에서 실행할 수 있습니다.
 
@@ -141,6 +174,52 @@ python train.py --mode random_blocks --algorithm td3
 
 # 주행 영상 녹화
 python Drive_Record.py --model models/best_model.zip --seed 1000
+```
+
+---
+
+### 3. SAC_LJH 프로젝트 (SAC + Visualization)
+
+#### [1차 & 2차] 기본 및 커리큘럼 학습
+```bash
+cd SAC_LJH/highway_project_2nd_Phase
+
+# 커리큘럼 학습 실행 (6단계)
+python train_curriculum.py --algorithm sac
+```
+
+#### [3차] 일반화 평가 및 TRACO 시각화
+```bash
+cd ../highway_project_3th_Phase
+
+# 랜덤 맵 10개 평가
+python evaluate_random_maps.py --model models/sac/sac_stage6_ramps.zip --num-maps 10
+
+# TRACO 궤적 시각화 생성
+python create_track_maps_random.py --results results/random_maps_evaluation.json
+```
+
+---
+
+### 4. Ensemble_LJH 프로젝트 (Model Ensemble)
+
+**위치 이동**
+```bash
+cd Ensemble_LJH/highway_project_Ensemble
+```
+
+#### 앙상블 평가 및 GIF 녹화 (Scenario Based)
+```bash
+python evaluate_ensemble.py \
+    --models models/td3_tsco_map_500k.zip models/sac_stage4_final.zip \
+    --strategy scenario_based \
+    --maps CSTO OSCT \
+    --record-gif
+```
+
+#### 결과 시각화
+```bash
+python visualize_ensemble.py --results results/ensemble_results.json
 ```
 
 ---
