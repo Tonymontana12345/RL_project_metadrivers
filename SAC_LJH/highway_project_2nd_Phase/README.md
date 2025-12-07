@@ -75,17 +75,7 @@ python evaluate.py --model models/SAC/sac_stage6_ramps.zip --episodes 50
 python evaluate.py --model models/SAC/sac_stage6_ramps.zip --render
 ```
 
-#### 커리큘럼 평가 (2nd Phase 신규)
-```bash
-# 커리큘럼 학습된 모델 평가
-python evaluate_curriculum.py --base-path models/SAC/curriculum
 
-# 특정 단계만 평가
-python evaluate_curriculum.py --base-path models/SAC/curriculum --stages 1 3 6
-
-# 렌더링과 함께
-python evaluate_curriculum.py --base-path models/SAC/curriculum --render
-```
 
 ### 4. 시각화
 
