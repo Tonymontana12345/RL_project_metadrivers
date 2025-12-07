@@ -51,11 +51,11 @@ python train.py --mode multi --algorithm sac
 
 #### 커리큘럼 학습 (2nd Phase 신규)
 ```bash
-# 커리큘럼 학습 (6단계 자동 진행)
-python train_curriculum.py --algorithm sac
+# Stage 3부터 학습
+python train_curriculum.py —start_stage 3 —end_stage 6
 
-# 특정 단계부터 시작
-python train_curriculum.py --algorithm sac --start-stage 3
+# Stage 6만 재학습
+python train_curriculum.py —start_stage 6 —end_stage 6
 
 # 커스텀 총 타임스텝 설정
 python train_curriculum.py --algorithm sac --total-timesteps 3000000

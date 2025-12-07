@@ -187,6 +187,18 @@ cd SAC_LJH/highway_project_2nd_Phase
 # 커리큘럼 학습 실행 (6단계)
 python train_curriculum.py --algorithm sac
 ```
+#### 커리큘럼 학습 (2nd Phase 신규)
+```bash
+# Stage 3부터 학습
+python train_curriculum.py —start_stage 3 —end_stage 6
+
+# Stage 6만 재학습
+python train_curriculum.py —start_stage 6 —end_stage 6
+
+# 커스텀 총 타임스텝 설정
+python train_curriculum.py --algorithm sac --total-timesteps 3000000
+```
+
 
 #### [3차] 일반화 평가 및 TRACO 시각화
 ```bash
