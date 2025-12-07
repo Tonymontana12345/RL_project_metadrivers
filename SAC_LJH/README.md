@@ -48,10 +48,13 @@ python train.py --mode fixed --algorithm sac
 
 ```bash
 # 커리큘럼 학습 (6단계 자동 진행)
-python train_curriculum.py --algorithm sac
+python train_curriculum.py
 
-# 특정 단계부터 시작
-python train_curriculum.py --algorithm sac --start-stage 3
+# Stage 3부터 학습
+python train_curriculum.py --start_stage 3 --end_stage 6
+
+# Stage 6만 재학습
+python train_curriculum.py --start_stage 6 --end_stage 6
 ```
 
 ### 3. 랜덤 맵 평가 (3차 전용)
